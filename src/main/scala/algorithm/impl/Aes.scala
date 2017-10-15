@@ -7,7 +7,7 @@ import algorithm.Encryption
   * @since 07.10.17
   */
 class Aes extends Encryption {
-  override def encrypt(message: String, key: String) = ???
+  override def encrypt(message: String, key: String): String = ???
 
-  override def decrypt(message: String, key: String) = ???
+  override def decrypt(message: String, key: String): String = ???
 }

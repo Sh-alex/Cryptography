@@ -6,12 +6,13 @@ import algorithm.impl.Des
   */
 object Main {
   def main(args: Array[String]) {
-    val MESSAGE = "1234567890abcdefghkjmlno"
-    val KEY = "asdasasdrfgt"
+    val MESSAGE = "This is secret message!!!"
+    val KEY = "Secret key"
     val des = new Des()
-    println(MESSAGE)
-    println(des.encrypt(MESSAGE, KEY))
-    println(des.decrypt(des.encrypt(MESSAGE, KEY), KEY))
+    println("Input: " + MESSAGE)
+    val cipher = des.encrypt(MESSAGE, KEY)
+    println("Encrypted: " + cipher)
+    println("Decrypted: " + des.decrypt(cipher, KEY))
   }
 
 }
