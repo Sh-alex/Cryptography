@@ -12,19 +12,19 @@ object Main {
     println("------------DES------------")
     val des = new Des()
     println("Input: " + MESSAGE)
-    val cipherDes = des.encrypt(MESSAGE, KEY)
-    println("Encrypted: " + cipherDes)
-    println("Decrypted: " + des.decrypt(cipherDes, KEY))
+
+    val cipherDes = des.encrypt(Util.messageToBlockSize(MESSAGE, 64).getBytes().map(_.toInt), Util.keyToRightSize(KEY, 56).getBytes().map(_.toInt))
+    println("Encrypted: " + new String(cipherDes.map(_.toByte)))
+    println("Decrypted: " + Util.trimMessage(new String(des.decrypt(cipherDes, Util.keyToRightSize(KEY, 56).getBytes().map(_.toInt)).map(_.toByte)), '#'))
 
     println("------------AES------------")
     val aes = new Aes()
     println("Input: " + MESSAGE)
-    val cipherAes = aes.encrypt(MESSAGE, KEY)
+    val cipherAes = aes.encrypt(Util.messageToBlockSize(MESSAGE, 16).getBytes().map(_.toInt), Util.keyToRightSize(KEY, 16).getBytes().map(_.toInt))
     val encryptedStr: String = new String(cipherAes.map(_.toByte))
     println("Encrypted: ")
     println(encryptedStr)
-    val decryptedStr = new String(aes.decrypt(cipherAes, KEY.getBytes()).map(_.toByte))
-      .filterNot((x: Char) => x.equals('#'))
+    val decryptedStr = Util.trimMessage(new String(aes.decrypt(cipherAes, Util.keyToRightSize(KEY, 16).getBytes().map(_.toInt)).map(_.toByte)), '#')
     println("Decrypted: " + decryptedStr)
   }
 

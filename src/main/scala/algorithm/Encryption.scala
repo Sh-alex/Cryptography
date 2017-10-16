@@ -5,7 +5,7 @@ package algorithm
   * @since 07.10.17
   */
 trait Encryption {
-  def encrypt(message: String, key: String): String
+  def encrypt(message: Array[Int], key: Array[Int]): Array[Int]
 
-  def decrypt(message: String, key: String): String
+  def decrypt(message: Array[Int], key: Array[Int]): Array[Int]
 }

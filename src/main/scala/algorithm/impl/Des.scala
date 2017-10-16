@@ -12,53 +12,35 @@ class Des extends Encryption {
   private val BLOCK_SIZE = 64
   private val KEY_SIZE = 56
 
-  override def encrypt(message: String, key: String): String = {
-    val messageForEncrypt = messageToBlockSize(message)
-    val keyForEncrypt = keyToRightSize(key)
-
-    val bytes = messageForEncrypt.getBytes()
-    val keyBytes = keyForEncrypt.getBytes()
-
-    val resultArray = encryptInternal(bytes, keyBytes, isEncrypt = true)
-    val encryptedStr = new String(resultArray)
-    encryptedStr
+  override def encrypt(message: Array[Int], key: Array[Int]): Array[Int] = {
+    encryptInternal(message, key, isEncrypt = true)
   }
 
-  override def decrypt(message: String, key: String): String = {
-    val messageForDecrypt = messageToBlockSize(message)
-    val keyForDecrypt = keyToRightSize(key)
-
-    val bytes = messageForDecrypt.getBytes()
-    val keyBytes = keyForDecrypt.getBytes()
-
-    val resultArray = encryptInternal(bytes, keyBytes, isEncrypt = false)
-    val decryptedStr = new String(resultArray)
-
-    decryptedStr.filterNot((x: Char) => x.equals('#'))
+  override def decrypt(message: Array[Int], key: Array[Int]): Array[Int] = {
+    encryptInternal(message, key, isEncrypt = false)
   }
 
-  private def encryptInternal(bytes: Array[Byte], keyBytes: Array[Byte], isEncrypt: Boolean): Array[Byte] = {
-    var result = Array.empty[Byte]
+  private def encryptInternal(bytes: Array[Int], keyBytes: Array[Int], isEncrypt: Boolean): Array[Int] = {
+    var result = Array.empty[Int]
 
     val blocks = bytes.sliding(BLOCK_SIZE, BLOCK_SIZE).toList
-    for(block <- blocks) {
-
+    for (block <- blocks) {
       var keyForBlock = keyBytes.clone()
       var right = block.take(block.length / 2)
       var left = block.drop(block.length / 2)
 
       if (!isEncrypt) {
-        for (i <- 1 until NUM_FEISTEL) {
+        for (_ <- 1 until NUM_FEISTEL) {
           keyForBlock = keyForBlock.last +: keyForBlock.dropRight(1)
         }
       }
 
-      for (i <- 1 to NUM_FEISTEL) {
-        val temp: Array[Byte] = left.clone()
+      for (_ <- 1 to NUM_FEISTEL) {
+        val temp: Array[Int] = left.clone()
         //L = R
         //R = L xor f(R, k)
         left = right.clone()
-        right = temp.zip(feistelFunction(right, keyForBlock)).map { case (x, y) => x ^ y }.map(_.toByte)
+        right = temp.zip(feistelFunction(right, keyForBlock)).map { case (x, y) => x ^ y }
 
         if (isEncrypt)
           keyForBlock = keyForBlock.last +: keyForBlock.dropRight(1) //right shift
@@ -71,24 +53,9 @@ class Des extends Encryption {
     result
   }
 
-  private def messageToBlockSize(message: String): String = {
-    val strBuilder = new StringBuilder(message)
-    while (strBuilder.toString().length % BLOCK_SIZE != 0)
-      strBuilder.append("#")
 
-    strBuilder.toString()
-  }
-
-  private def keyToRightSize(key: String): String = {
-    val strBuilder = new StringBuilder(key)
-    while (strBuilder.toString().length % KEY_SIZE != 0)
-      strBuilder.append("#")
-
-    strBuilder.toString()
-  }
-
-  private def feistelFunction(message: Array[Byte], key: Array[Byte]): Array[Byte] = {
+  private def feistelFunction(message: Array[Int], key: Array[Int]): Array[Int] = {
     //Ri xor ki
-    (message, key).zipped.map(_ ^ _).map(_.toByte)
+    (message, key).zipped.map(_ ^ _)
   }
 }

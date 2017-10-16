@@ -6,42 +6,20 @@ import algorithm.Encryption
   * @author Oleksandr Shevchenko
   * @since 07.10.17
   */
-class Aes /*extends Encryption*/ {
+class Aes extends Encryption {
 
   private val Nb = 4 //AES, Nb = 4 (block size 128)
   private val Nk = 4 //AES, Nk = 4, 6, or 8 (key size 128/192/256 )
   private val NUM_ROUNDS = 10 //AES, Nr = 10, 12, 14 (128/192/256 )
   private val BLOCK_SIZE = 16
 
-
-   def encrypt(message: String, key: String): Array[Int] = {
-    val messageForEncrypt = messageToBlockSize(message)
-    val bytes = messageForEncrypt.getBytes()
-
-    val keyForEncrypt = keyToRightSize(key)
-    val keyBytes = keyForEncrypt.getBytes()
-
-    encrypt(bytes, keyBytes)
-  }
-
-   def decrypt(message: String, key: String): String = {
-    val messageForEncrypt = messageToBlockSize(message)
-    val bytes = messageForEncrypt.getBytes()
-
-    val keyForEncrypt = keyToRightSize(key)
-    val keyBytes = keyForEncrypt.getBytes()
-
-    val resultStr = new String(decrypt(bytes.map(_.toInt), keyBytes).map(_.toByte))
-    resultStr
-  }
-
-  def encrypt(bytes: Array[Byte], keyBytes: Array[Byte]): Array[Int] = {
+  override def encrypt(bytes: Array[Int], keyBytes: Array[Int]): Array[Int] = {
 
     var result = Array.empty[Int]
 
     val blocks = bytes.sliding(BLOCK_SIZE, BLOCK_SIZE).toList
     var state = Array.ofDim[Int](4, Nb)
-    for(block <- blocks) {
+    for (block <- blocks) {
       state = Array.ofDim[Int](4, Nb)
       //State[r][c] = input[r + 4c], r = 0,1...4; c = 0,1..Nb.
       for (r <- 0 until 4; c <- 0 until Nb)
@@ -73,14 +51,14 @@ class Aes /*extends Encryption*/ {
     result
   }
 
-  def decrypt(bytes: Array[Int], keyBytes: Array[Byte]): Array[Int] = {
+  override def decrypt(bytes: Array[Int], keyBytes: Array[Int]): Array[Int] = {
 
     var result = Array.empty[Int]
 
     val blocks = bytes.sliding(BLOCK_SIZE, BLOCK_SIZE).toList
     var state = Array.ofDim[Int](4, Nb)
 
-    for(block <- blocks) {
+    for (block <- blocks) {
       //State[r][c] = input[r + 4c], r = 0,1...4; c = 0,1..Nb.
       for (r <- 0 until 4; c <- 0 until Nb)
         state(r)(c) = block(r + 4 * c)
@@ -111,23 +89,6 @@ class Aes /*extends Encryption*/ {
     }
 
     result
-  }
-
-
-  private def messageToBlockSize(message: String): String = {
-    val strBuilder = new StringBuilder(message)
-    while (strBuilder.toString().length % BLOCK_SIZE != 0)
-      strBuilder.append("#")
-
-    strBuilder.toString()
-  }
-
-  private def keyToRightSize(key: String): String = {
-    val strBuilder = new StringBuilder(key)
-    while (strBuilder.toString().length % BLOCK_SIZE != 0)
-      strBuilder.append("#")
-
-    strBuilder.toString()
   }
 
   private def mixColumns(state: Array[Array[Int]], isEncrypt: Boolean = true) = {
@@ -199,8 +160,6 @@ class Aes /*extends Encryption*/ {
       val row = state(i)(j) / 0x10
       val col = state(i)(j) % 0x10
 
-      // Our Sbox is a flat array, not a bable. So, we use this trich to find elem:
-      // And DO NOT change list sbox! if you want it to work
       val boxElem = box(BLOCK_SIZE * row + col)
       state(i)(j) = boxElem
     }
@@ -225,7 +184,7 @@ class Aes /*extends Encryption*/ {
     state
   }
 
-  private def keyExpansion(key: Array[Byte]): Array[Array[Int]] = {
+  private def keyExpansion(key: Array[Int]): Array[Array[Int]] = {
     val keySchedule = Array.ofDim[Int](4, 4)
     //make ChipherKey(which is base of KeySchedule)
     for (r <- 0 until 4; c <- 0 until Nb)
