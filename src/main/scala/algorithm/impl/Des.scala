@@ -15,20 +15,30 @@ class Des extends Encryption {
   override def encrypt(message: String, key: String): String = {
     val messageForEncrypt = messageToBlockSize(message)
     val keyForEncrypt = keyToRightSize(key)
-    encryptInternal(messageForEncrypt, keyForEncrypt, isEncrypt = true)
+
+    val bytes = messageForEncrypt.getBytes()
+    val keyBytes = keyForEncrypt.getBytes()
+
+    val resultArray = encryptInternal(bytes, keyBytes, isEncrypt = true)
+    val encryptedStr = new String(resultArray)
+    encryptedStr
   }
 
   override def decrypt(message: String, key: String): String = {
     val messageForDecrypt = messageToBlockSize(message)
     val keyForDecrypt = keyToRightSize(key)
-    encryptInternal(messageForDecrypt, keyForDecrypt, isEncrypt = false)
-      .filterNot((x: Char) => x.equals('#'))
+
+    val bytes = messageForDecrypt.getBytes()
+    val keyBytes = keyForDecrypt.getBytes()
+
+    val resultArray = encryptInternal(bytes, keyBytes, isEncrypt = false)
+    val decryptedStr = new String(resultArray)
+
+    decryptedStr.filterNot((x: Char) => x.equals('#'))
   }
 
-  private def encryptInternal(message: String, key: String, isEncrypt: Boolean): String = {
-    val bytes = message.getBytes()
-    val keyBytes = key.getBytes()
-    val result = new StringBuilder("")
+  private def encryptInternal(bytes: Array[Byte], keyBytes: Array[Byte], isEncrypt: Boolean): Array[Byte] = {
+    var result = Array.empty[Byte]
 
     val blocks = bytes.sliding(BLOCK_SIZE, BLOCK_SIZE).toList
     for(block <- blocks) {
@@ -56,9 +66,9 @@ class Des extends Encryption {
           keyForBlock = keyForBlock.tail :+ keyForBlock.head //left shift
       }
 
-      result.append(new String(left ++ right))
+      result ++= left ++ right
     }
-    result.toString()
+    result
   }
 
   private def messageToBlockSize(message: String): String = {
