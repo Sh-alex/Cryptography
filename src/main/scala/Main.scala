@@ -1,4 +1,4 @@
-import algorithm.impl.{Aes, Des}
+import algorithm.impl.{Aes, Des, Rsa}
 
 /**
   * @author Oleksandr Shevchenko
@@ -11,21 +11,30 @@ object Main {
 
     println("------------DES------------")
     val des = new Des()
-    println("Input: " + MESSAGE)
-
     val cipherDes = des.encrypt(Util.messageToBlockSize(MESSAGE, 64).getBytes().map(_.toInt), Util.keyToRightSize(KEY, 56).getBytes().map(_.toInt))
+    println("Input: " + MESSAGE)
     println("Encrypted: " + new String(cipherDes.map(_.toByte)))
     println("Decrypted: " + Util.trimMessage(new String(des.decrypt(cipherDes, Util.keyToRightSize(KEY, 56).getBytes().map(_.toInt)).map(_.toByte)), '#'))
 
     println("------------AES------------")
     val aes = new Aes()
-    println("Input: " + MESSAGE)
     val cipherAes = aes.encrypt(Util.messageToBlockSize(MESSAGE, 16).getBytes().map(_.toInt), Util.keyToRightSize(KEY, 16).getBytes().map(_.toInt))
     val encryptedStr: String = new String(cipherAes.map(_.toByte))
+    val decryptedStr = Util.trimMessage(new String(aes.decrypt(cipherAes, Util.keyToRightSize(KEY, 16).getBytes().map(_.toInt)).map(_.toByte)), '#')
+    println("Input: " + MESSAGE)
     println("Encrypted: ")
     println(encryptedStr)
-    val decryptedStr = Util.trimMessage(new String(aes.decrypt(cipherAes, Util.keyToRightSize(KEY, 16).getBytes().map(_.toInt)).map(_.toByte)), '#')
     println("Decrypted: " + decryptedStr)
+
+    println("------------RSA------------")
+    val rsa = new Rsa(16)
+    val encRsa = rsa.encrypt(MESSAGE.getBytes)
+    val decRsa = rsa.decrypt(encRsa)
+    val decryptedRsa = new String(decRsa)
+    println("Input: " + MESSAGE)
+    println("Encrypted: " + encRsa.deep.mkString(", "))
+    println("Decrypted: " + decryptedRsa)
+    println(rsa.toString())
   }
 
 }
