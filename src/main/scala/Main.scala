@@ -1,4 +1,4 @@
-import algorithm.impl.{Aes, Des, Rsa}
+import algorithm.impl.{Aes, Des, ElGamal, Rsa}
 
 /**
   * @author Oleksandr Shevchenko
@@ -34,7 +34,16 @@ object Main {
     println("Input: " + MESSAGE)
     println("Encrypted: " + encRsa.deep.mkString(", "))
     println("Decrypted: " + decryptedRsa)
-    println(rsa.toString())
+    //println(rsa.toString())
+
+    println("------------ElGamal------------")
+    val elgamal = new ElGamal()
+    val encElGamal = elgamal.encrypt(MESSAGE.getBytes())
+    val decElGamal = elgamal.decrypt(encElGamal)
+    val decryptedElGamal = new String(decElGamal)
+    println("Input: " + MESSAGE)
+    println("Encrypted: " + encElGamal.deep.mkString(", "))
+    println("Decrypted: " + decryptedElGamal)
   }
 
 }

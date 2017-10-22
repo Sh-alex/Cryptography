@@ -21,6 +21,22 @@ class Rsa(val keySize: Int) {
   publicKey = generatePublicKey()
   private val privateKey = publicKey.modInverse(phi) //d=e^{-1} mod phi
 
+  def encrypt(message: BigInt): BigInt = {
+    message.modPow(publicKey, n) //message^e mod n
+  }
+
+  def decrypt(cipher: BigInt): BigInt = {
+    cipher.modPow(privateKey, n) //cipher^d mod n
+  }
+
+  def encrypt(message: Array[Byte]): Array[BigInt] = {
+    message.map(x => Array[Byte](x)).map(enc)
+  }
+
+  def decrypt(cipher: Array[BigInt]): Array[Byte] = {
+    cipher.map(decrypt).flatMap(_.toByteArray)
+  }
+
   private def generatePublicKey(): BigInt = {
     while (phi.gcd(publicKey).intValue() > 1) {
       publicKey += 2
@@ -39,24 +55,9 @@ class Rsa(val keySize: Int) {
     BigInt(number).isProbablePrime(certainty)
   }
 
-  def encrypt(message: BigInt): BigInt = {
-    message.modPow(publicKey, n) //message^e mod n
-  }
-
-  def decrypt(cipher: BigInt): BigInt = {
-    cipher.modPow(privateKey, n) //cipher^d mod n
-  }
-
-  def encrypt(message: Array[Byte]): Array[BigInt] = {
-    message.map(x => Array[Byte](x)).map(enc)
-  }
 
   private def enc(message: Array[Byte]): BigInt = {
     BigInt(message).modPow(publicKey, n)
-  }
-
-  def decrypt(cipher: Array[BigInt]): Array[Byte] = {
-    cipher.map(decrypt).flatMap(_.toByteArray)
   }
 
   override def toString(): String = {
