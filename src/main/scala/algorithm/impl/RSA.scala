@@ -8,7 +8,7 @@ import math._
   * @since 21.10.17
   */
 
-class Rsa(val keySize: Int) {
+class RSA(val keySize: Int) {
 
   require(keySize > 0)
 

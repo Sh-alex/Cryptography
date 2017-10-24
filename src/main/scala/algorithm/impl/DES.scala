@@ -6,7 +6,7 @@ import algorithm.Encryption
   * @author Oleksandr Shevchenko
   * @since 07.10.17
   */
-class Des extends Encryption {
+class DES extends Encryption {
 
   private val NUM_FEISTEL = 16
   private val BLOCK_SIZE = 64

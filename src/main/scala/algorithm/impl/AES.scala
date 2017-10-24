@@ -6,7 +6,7 @@ import algorithm.Encryption
   * @author Oleksandr Shevchenko
   * @since 07.10.17
   */
-class Aes extends Encryption {
+class AES extends Encryption {
 
   private val Nb = 4 //AES, Nb = 4 (block size 128)
   private val Nk = 4 //AES, Nk = 4, 6, or 8 (key size 128/192/256 )

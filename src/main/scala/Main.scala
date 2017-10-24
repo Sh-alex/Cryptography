@@ -1,4 +1,4 @@
-import algorithm.impl.{Aes, Des, ElGamal, Rsa}
+import algorithm.impl._
 
 /**
   * @author Oleksandr Shevchenko
@@ -10,14 +10,14 @@ object Main {
     val KEY = "Secret key!!!!!!"
 
     println("------------DES------------")
-    val des = new Des()
+    val des = new DES()
     val cipherDes = des.encrypt(Util.messageToBlockSize(MESSAGE, 64).getBytes().map(_.toInt), Util.keyToRightSize(KEY, 56).getBytes().map(_.toInt))
     println("Input: " + MESSAGE)
     println("Encrypted: " + new String(cipherDes.map(_.toByte)))
     println("Decrypted: " + Util.trimMessage(new String(des.decrypt(cipherDes, Util.keyToRightSize(KEY, 56).getBytes().map(_.toInt)).map(_.toByte)), '#'))
 
     println("------------AES------------")
-    val aes = new Aes()
+    val aes = new AES()
     val cipherAes = aes.encrypt(Util.messageToBlockSize(MESSAGE, 16).getBytes().map(_.toInt), Util.keyToRightSize(KEY, 16).getBytes().map(_.toInt))
     val encryptedStr: String = new String(cipherAes.map(_.toByte))
     val decryptedStr = Util.trimMessage(new String(aes.decrypt(cipherAes, Util.keyToRightSize(KEY, 16).getBytes().map(_.toInt)).map(_.toByte)), '#')
@@ -27,7 +27,7 @@ object Main {
     println("Decrypted: " + decryptedStr)
 
     println("------------RSA------------")
-    val rsa = new Rsa(16)
+    val rsa = new RSA(2048)
     val encRsa = rsa.encrypt(MESSAGE.getBytes)
     val decRsa = rsa.decrypt(encRsa)
     val decryptedRsa = new String(decRsa)
@@ -44,6 +44,24 @@ object Main {
     println("Input: " + MESSAGE)
     println("Encrypted: " + encElGamal.deep.mkString(", "))
     println("Decrypted: " + decryptedElGamal)
+
+    println("------------MD5------------")
+    val md = new MD5()
+    val hashMD5 = md.hash(MESSAGE)
+    println("Input: " + MESSAGE)
+    println(s"Hash: $hashMD5")
+
+    println("------------SHA3------------")
+    val sha = new SHA3()
+    val hashSHA = sha.hash(MESSAGE)
+    println("Input: " + MESSAGE)
+    println(s"Hash: $hashSHA")
+
+    println("------------Kupyna------------")
+    val kupyna = new Kupyna()
+    val hashKupyna = kupyna.hash(MESSAGE)
+    println("Input: " + MESSAGE)
+    println(s"Hash: $hashKupyna")
   }
 
 }
