@@ -62,6 +62,34 @@ object Main {
     val hashKupyna = kupyna.hash(MESSAGE)
     println("Input: " + MESSAGE)
     println(s"Hash: $hashKupyna")
+
+    println("------------Digital signature------------")
+    println("------------RSA with MD5------------")
+    val digMd = new MD5()
+    val digHashMD5 = digMd.hash(MESSAGE)
+    val digRsa = new RSA(2048)
+    val digEncRsa = digRsa.encrypt(digHashMD5.getBytes)
+
+    val digDecRsa = digRsa.decrypt(digEncRsa)
+    val clientDecrypted = new String(digDecRsa)
+    val messageHash = digMd.hash(MESSAGE)
+
+    val message = if (clientDecrypted.equals(messageHash)) "The digital signature is correct" else "The digital signature is forged!!!"
+    println(s"$message\nclientDecrypted = $clientDecrypted\nmessageHash = $messageHash")
+
+    println("------------ElGamal with SHA3------------")
+    val digSha3ElGamal = new SHA3()
+    val digHashSha3ElGamal = digSha3ElGamal.hash(MESSAGE)
+    val digElGamal = new ElGamal()
+    val digEncElGamal = digElGamal.encrypt(digHashSha3ElGamal.getBytes)
+
+    val digDecElGamal = digElGamal.decrypt(digEncElGamal)
+    val clientDecryptedElGamal = new String(digDecElGamal)
+    val messageHashElGamal = digSha3ElGamal.hash(MESSAGE)
+
+    val messageElGamal = if (clientDecryptedElGamal.equals(messageHashElGamal)) "The digital signature is correct" else "The digital signature is forged!!!"
+    println(s"$messageElGamal\nclientDecrypted = $clientDecryptedElGamal\nmessageHash = $messageHashElGamal")
+
   }
 
 }
