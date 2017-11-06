@@ -90,6 +90,25 @@ object Main {
     val messageElGamal = if (clientDecryptedElGamal.equals(messageHashElGamal)) "The digital signature is correct" else "The digital signature is forged!!!"
     println(s"$messageElGamal\nclientDecrypted = $clientDecryptedElGamal\nmessageHash = $messageHashElGamal")
 
-  }
+    println("------------DiffieHellman------------")
+    val p = DiffieHellman.randomPrime(32)
+    val g = 5 // 5 is a primitive root modulo 23
 
+    // initialize participants
+    val alice = new DiffieHellman(p, g, "alice")
+    val bob = new DiffieHellman(p, g, "bob")
+
+    // add to an array for convenience
+    val participants = List(alice, bob)
+
+    println("Public Keys:     " + participants.map(x => x.publicKey).mkString(" "))
+
+    // share all public keys with all participants
+    val result = DiffieHellman.doKeyExchange(participants)
+
+    println("Shared Secrets:  " + participants.map(p => p.secret).mkString(" "))
+
+    println("All keys shared? " + result)
+
+  }
 }
